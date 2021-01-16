@@ -65,4 +65,62 @@ class DataObjectTest extends TestCase {
 		self::assertSame("1", $sut->getString("this-is-true"));
 		self::assertSame("", $sut->getString("this-is-false"));
 	}
+
+	public function testGetStringNull() {
+		$sut = new DataObject();
+		self::assertNull($sut->getString("nothing"));
+	}
+
+	public function testGetIntFromString() {
+		$sut = (new DataObject())
+			->with("one", "1")
+			->with("two", "2")
+			->with("pi", "3.14159");
+
+		self::assertSame(1, $sut->getInt("one"));
+		self::assertSame(2, $sut->getInt("two"));
+		self::assertSame(3, $sut->getInt("pi"));
+	}
+
+	public function testGetIntFromFloat() {
+		$sut = (new DataObject())->with("pi", 3.14159);
+		self::assertSame(3, $sut->getInt("pi"));
+	}
+
+	public function testGetIntFromBool() {
+		$sut = (new DataObject())
+			->with("this-is-true", true)
+			->with("this-is-false", false);
+
+		self::assertSame(1, $sut->getInt("this-is-true"));
+		self::assertSame(0, $sut->getInt("this-is-false"));
+	}
+
+	public function testGetIntNull() {
+		$sut = new DataObject();
+		self::assertNull($sut->getInt("nothing"));
+	}
+
+	public function testGetFloatFromString() {
+		$sut = (new DataObject())
+			->with("pi", "3.14159");
+
+		self::assertSame(3.14159, $sut->getFloat("pi"));
+	}
+
+	public function testGetFloatFromInt() {
+		$sut = (new DataObject())
+			->with("one", 1);
+
+		self::assertSame(1.00, $sut->getFloat("one"));
+	}
+
+	public function testGetFloatFromBool() {
+		$sut = (new DataObject())
+			->with("this-is-true", true)
+			->with("this-is-false", false);
+
+		self::assertSame(1.00, $sut->getFloat("this-is-true"));
+		self::assertSame(0.00, $sut->getFloat("this-is-false"));
+	}
 }

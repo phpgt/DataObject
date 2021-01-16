@@ -29,15 +29,15 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	public function getString(string $name):?string {
-		return (string)$this->get($name);
+		return $this->getAsScalar($name, "string");
 	}
 
 	public function getInt(string $name):?int {
-		// TODO: Implement getInt() method.
+		return $this->getAsScalar($name, "int");
 	}
 
 	public function getFloat(string $name):?float {
-		// TODO: Implement getFloat() method.
+		return $this->getAsScalar($name, "float");
 	}
 
 	public function getBool(string $name):?bool {
@@ -58,5 +58,26 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 
 	public function asObject(bool $nested = true):object {
 		return (object)$this->asArray($nested);
+	}
+
+	private function getAsScalar(
+		string $name,
+		string $type
+	):float|null|bool|int|string {
+		$value = $this->get($name);
+		if(is_null($value)) {
+			return null;
+		}
+
+		switch($type) {
+		case "int":
+			return (int)$value;
+		case "float":
+			return (float)$value;
+		case "string":
+			return (string)$value;
+		case "bool":
+			return (bool)$value;
+		}
 	}
 }
