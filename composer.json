@@ -4,7 +4,8 @@
 	"type": "library",
 
 	"require": {
-		"php": ">=8.0"
+		"php": ">=8.0",
+		"phpgt/typesafegetter": "^1.0"
 	},
 
 	"require-dev": {
@@ -23,12 +24,12 @@
 
 	"autoload": {
 		"psr-4": {
-			"Gt\\Curl\\": "./src"
+			"Gt\\DataObject\\": "./src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Gt\\Curl\\Test\\": "./test/phpunit"
+			"Gt\\DataObject\\Test\\": "./test/phpunit"
 		}
 	}
 }
