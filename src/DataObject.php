@@ -29,7 +29,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	public function getString(string $name):?string {
-		// TODO: Implement getString() method.
+		return (string)$this->get($name);
 	}
 
 	public function getInt(string $name):?int {

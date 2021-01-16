@@ -1,6 +1,6 @@
 {
 	"name": "phpgt/dataobject",
-	"description": " Structured, type-safe data transfer.",
+	"description": " Structured, type-safe, immutable data transfer.",
 	"type": "library",
 
 	"require": {
