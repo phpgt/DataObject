@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DataObject;
 
+use DateTimeImmutable;
 use DateTimeInterface;
 use Gt\TypeSafeGetter\TypeSafeGetter;
 use JsonSerializable;
@@ -45,7 +46,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	public function getDateTime(string $name):DateTimeInterface {
-		// TODO: Implement getDateTime() method.
+		return $this->getAsType($name, DateTimeInterface::class);
 	}
 
 	public function jsonSerialize():mixed {
@@ -63,7 +64,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	private function getAsType(
 		string $name,
 		string $type
-	):float|null|bool|int|string {
+	):mixed {
 		$value = $this->get($name);
 		if(is_null($value)) {
 			return null;
@@ -78,13 +79,42 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 			return (string)$value;
 		case "bool":
 			return (bool)$value;
-		default:
-			if(method_exists($this, "getAs$type")) {
-				return call_user_func(
-					[$this, "getAs$type"],
-					$value
-				);
-			}
 		}
+
+		if(method_exists($this, "getAs$type")) {
+			return call_user_func(
+				[$this, "getAs$type"],
+				$value
+			);
+		}
+
+		return null;
+	}
+
+	private function getAsDateTimeInterface(mixed $value):DateTimeInterface {
+		$dateTime = new DateTimeImmutable();
+
+		if($value instanceof DateTimeInterface) {
+			return $value;
+		}
+		elseif(is_int($value)) {
+			$dateTime = $dateTime->setTimestamp($value);
+		}
+		elseif(is_float($value)) {
+			$timestamp = (int)floor($value);
+			$microsecond = ($value - $timestamp) * 1_000_000;
+			$dateTime = $dateTime->setTimestamp($timestamp);
+			$dateTime = $dateTime->setTime(
+				$dateTime->format("H"),
+				$dateTime->format("i"),
+				$dateTime->format("s"),
+				round($microsecond)
+			);
+		}
+		else {
+			$dateTime = new DateTimeImmutable($value);
+		}
+
+		return $dateTime;
 	}
 }

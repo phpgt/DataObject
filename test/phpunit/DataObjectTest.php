@@ -1,6 +1,7 @@
 <?php
 namespace Gt\DataObject\Test;
 
+use DateTime;
 use Gt\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
 
@@ -151,5 +152,44 @@ class DataObjectTest extends TestCase {
 
 		self::assertFalse($sut->getBool("zero"));
 		self::assertTrue($sut->getBool("pi"));
+	}
+
+	public function testGetDateTimeFromInt() {
+		$sut = (new DataObject())
+			->with("epoch", 0)
+			->with("birthday", 576264065);
+
+		$epochDateTime = new DateTime();
+		$epochDateTime->setTimestamp(0);
+		self::assertEquals($epochDateTime, $sut->getDateTime("epoch"));
+
+		$birthdayDateTime = new DateTime("5th April 1988 17:21:05");
+		self::assertEquals($birthdayDateTime, $sut->getDateTime("birthday"));
+	}
+
+	public function testGetDateTimeFromFloat() {
+		$sut = (new DataObject())
+			->with("precise-time", 576264065.000105);
+
+		$dateTime = $sut->getDateTime("precise-time");
+		self::assertEquals(105, $dateTime->format("u"));
+	}
+
+	public function getDateTimeFromString() {
+		$epochDateString = "1st January 1970 00:00:00";
+		$birthdayDateString = "5th April 1988 17:21:05";
+
+		$sut = (new DataObject())
+			->with("epoch", $epochDateString)
+			->with("birthday", $birthdayDateString);
+
+		self::assertEquals(
+			$epochDateString,
+			$sut->getDateTime("epoch")->format("jS M Y H:i:s")
+		);
+		self::assertEquals(
+			$birthdayDateString,
+			$sut->getDateTime("birthday")->format("jS M Y H:i:s")
+		);
 	}
 }
