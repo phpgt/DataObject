@@ -79,7 +79,12 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		case "bool":
 			return (bool)$value;
 		default:
-			return new $type($value);
+			if(method_exists($this, "getAs$type")) {
+				return call_user_func(
+					[$this, "getAs$type"],
+					$value
+				);
+			}
 		}
 	}
 }
