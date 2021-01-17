@@ -1,10 +1,11 @@
 {
-	"name": "phpgt/dataobject",
 	"description": " Structured, type-safe, immutable data transfer.",
+	"name": "phpgt/dataobject",
 	"type": "library",
 
 	"require": {
 		"php": ">=8.0",
+		"ext-json": "*",
 		"phpgt/typesafegetter": "^1.0"
 	},
 
