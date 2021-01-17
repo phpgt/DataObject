@@ -123,4 +123,33 @@ class DataObjectTest extends TestCase {
 		self::assertSame(1.00, $sut->getFloat("this-is-true"));
 		self::assertSame(0.00, $sut->getFloat("this-is-false"));
 	}
+
+	public function testGetBoolFromString() {
+		$sut = (new DataObject())
+			->with("non-empty", "something")
+			->with("empty", "");
+
+		self::assertTrue($sut->getBool("non-empty"));
+		self::assertFalse($sut->getBool("empty"));
+	}
+
+	public function testGetBoolFromInt() {
+		$sut = (new DataObject())
+			->with("zero", 0)
+			->with("one", 1)
+			->with("two", 2);
+
+		self::assertFalse($sut->getBool("zero"));
+		self::assertTrue($sut->getBool("one"));
+		self::assertTrue($sut->getBool("two"));
+	}
+
+	public function testGetBoolFromFloat() {
+		$sut = (new DataObject())
+			->with("zero", 0.00)
+			->with("pi", 3.14159);
+
+		self::assertFalse($sut->getBool("zero"));
+		self::assertTrue($sut->getBool("pi"));
+	}
 }

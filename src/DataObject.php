@@ -29,19 +29,19 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	public function getString(string $name):?string {
-		return $this->getAsScalar($name, "string");
+		return $this->getAsType($name, "string");
 	}
 
 	public function getInt(string $name):?int {
-		return $this->getAsScalar($name, "int");
+		return $this->getAsType($name, "int");
 	}
 
 	public function getFloat(string $name):?float {
-		return $this->getAsScalar($name, "float");
+		return $this->getAsType($name, "float");
 	}
 
 	public function getBool(string $name):?bool {
-		// TODO: Implement getBool() method.
+		return $this->getAsType($name, "bool");
 	}
 
 	public function getDateTime(string $name):DateTimeInterface {
@@ -60,7 +60,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return (object)$this->asArray($nested);
 	}
 
-	private function getAsScalar(
+	private function getAsType(
 		string $name,
 		string $type
 	):float|null|bool|int|string {
@@ -78,6 +78,8 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 			return (string)$value;
 		case "bool":
 			return (bool)$value;
+		default:
+			return new $type($value);
 		}
 	}
 }
