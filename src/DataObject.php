@@ -7,6 +7,7 @@ use Gt\TypeSafeGetter\TypeSafeGetter;
 use JsonSerializable;
 
 class DataObject implements JsonSerializable, TypeSafeGetter {
+	/** @var mixed[] */
 	private array $data;
 
 	public function __construct() {
@@ -53,12 +54,29 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return $this->asArray();
 	}
 
-	public function asArray(bool $nested = true):array {
+	/** @return mixed[] */
+	public function asArray():array {
+		$array = $this->data;
 
+		array_walk_recursive($array, function(&$item):void {
+			if($item instanceof static) {
+				$item = $item->asArray();
+			}
+		});
+
+		return $array;
 	}
 
-	public function asObject(bool $nested = true):object {
-		return (object)$this->asArray($nested);
+	public function asObject():object {
+		$array = $this->data;
+
+		array_walk_recursive($array, function(&$item):void {
+			if($item instanceof static) {
+				$item = $item->asObject();
+			}
+		});
+
+		return (object)$array;
 	}
 
 	private function getAsType(
@@ -105,10 +123,10 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 			$microsecond = ($value - $timestamp) * 1_000_000;
 			$dateTime = $dateTime->setTimestamp($timestamp);
 			$dateTime = $dateTime->setTime(
-				$dateTime->format("H"),
-				$dateTime->format("i"),
-				$dateTime->format("s"),
-				round($microsecond)
+				(int)$dateTime->format("H"),
+				(int)$dateTime->format("i"),
+				(int)$dateTime->format("s"),
+				(int)round($microsecond)
 			);
 		}
 		else {

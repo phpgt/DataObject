@@ -192,4 +192,59 @@ class DataObjectTest extends TestCase {
 			$sut->getDateTime("birthday")->format("jS M Y H:i:s")
 		);
 	}
+
+	public function testAsArray() {
+		$doubleNested = (new DataObject())
+			->with("leaf-key-1", "leaf-value-1")
+			->with("leaf-key-2", "leaf-value-2");
+
+		$nested = (new DataObject())
+			->with("score", 77.4)
+			->with("code", "AAA")
+			->with("nested-data", $doubleNested);
+
+		$sut = (new DataObject())
+			->with("name", "example")
+			->with("id", 123)
+			->with("data", $nested);
+
+		$array = $sut->asArray();
+		self::assertArrayHasKey("id", $array);
+		self::assertArrayHasKey("name", $array);
+		self::assertArrayHasKey("data", $array);
+
+		self::assertIsArray($array["data"]);
+		self::assertArrayHasKey("score", $array["data"]);
+		self::assertArrayHasKey("code", $array["data"]);
+
+		self::assertIsArray($array["data"]["nested-data"]);
+		self::assertArrayHasKey("leaf-key-1", $array["data"]["nested-data"]);
+		self::assertArrayHasKey("leaf-key-2", $array["data"]["nested-data"]);
+	}
+
+	public function testAsObject() {
+		$doubleNested = (new DataObject())
+			->with("leafKey1", "leaf-value-1")
+			->with("leafKey2", "leaf-value-2");
+
+		$nested = (new DataObject())
+			->with("score", 77.4)
+			->with("code", "AAA")
+			->with("nestedData", $doubleNested);
+
+		$sut = (new DataObject())
+			->with("name", "example")
+			->with("id", 123)
+			->with("data", $nested);
+
+		$object = $sut->asObject();
+		self::assertEquals(123, $object->id);
+		self::assertEquals("example", $object->name);
+		self::assertIsObject($object->data);
+		self::assertEquals(77.4, $object->data->score);
+		self::assertEquals("AAA", $object->data->code);
+		self::assertIsObject($object->data->nestedData);
+		self::assertEquals("leaf-value-1", $object->data->nestedData->leafKey1);
+		self::assertEquals("leaf-value-2", $object->data->nestedData->leafKey2);
+	}
 }
