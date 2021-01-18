@@ -2,22 +2,21 @@
 namespace Gt\DataObject\Test;
 
 use Gt\DataObject\AssociativeArrayWithinObjectException;
-use Gt\DataObject\Builder;
+use Gt\DataObject\DataObjectBuilder;
 use Gt\DataObject\DataObject;
 use Gt\DataObject\Json\JsonArrayData;
-use Gt\DataObject\Json\JsonKvpData;
 use Gt\DataObject\Json\JsonPrimitiveData;
 use Gt\DataObject\ObjectWithinAssociativeArrayException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class BuilderTest extends TestCase {
+class DataObjectBuilderTest extends TestCase {
 	public function testFromObjectSimple() {
 		$obj = new StdClass();
 		$obj->key1 = "value1";
 		$obj->key2 = "value2";
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromObject($obj);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -32,7 +31,7 @@ class BuilderTest extends TestCase {
 		$obj->nested->key3 = "value3";
 		$obj->nested->key4 = "value4";
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromObject($obj);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -60,7 +59,7 @@ class BuilderTest extends TestCase {
 			$innerObj2,
 		);
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromObject($obj);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -81,7 +80,7 @@ class BuilderTest extends TestCase {
 			"key2" => "value2",
 		);
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromAssociativeArray($array);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -98,7 +97,7 @@ class BuilderTest extends TestCase {
 			]
 		);
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromAssociativeArray($array);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -123,7 +122,7 @@ class BuilderTest extends TestCase {
 			]
 		);
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$output = $sut->fromAssociativeArray($array);
 
 		self::assertEquals("value1", $output->getString("key1"));
@@ -146,7 +145,7 @@ class BuilderTest extends TestCase {
 			"key3" => "value3",
 		];
 
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		self::expectException(AssociativeArrayWithinObjectException::class);
 		$sut->fromObject($object);
 	}
@@ -160,7 +159,7 @@ class BuilderTest extends TestCase {
 			"key1" => "value1",
 			"obj" => $object,
 		);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		self::expectException(ObjectWithinAssociativeArrayException::class);
 		$sut->fromAssociativeArray($array);
 	}
@@ -174,7 +173,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$dataObject = $sut->fromObject($json);
 		self::assertEquals(123, $dataObject->getInt("id"));
 		self::assertEquals("Example", $dataObject->getString("name"));
@@ -190,7 +189,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$dataObject = $sut->fromObject($json);
 		self::assertEquals(123, $dataObject->getInt("id"));
 		self::assertContains("test", $dataObject->getArray("tags"));
@@ -208,7 +207,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString, true);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$dataObject = $sut->fromAssociativeArray($json);
 		self::assertEquals(123, $dataObject->getInt("id"));
 		self::assertContains("test", $dataObject->getArray("tags"));
@@ -225,7 +224,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertEquals(123, $data->getInt("id"));
@@ -238,7 +237,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertCount(3, $data);
@@ -256,7 +255,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertCount(3, $data);
@@ -276,7 +275,7 @@ class BuilderTest extends TestCase {
 		JSON;
 
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		/** @var JsonArrayData $data */
 		$data = $sut->fromJsonObject($json);
 
@@ -292,7 +291,7 @@ class BuilderTest extends TestCase {
 	public function testFromJsonObjectNull() {
 		$jsonString = "null";
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertInstanceOf(JsonPrimitiveData::class, $data);
@@ -303,7 +302,7 @@ class BuilderTest extends TestCase {
 	public function testFromJsonObjectBool() {
 		$jsonString = "true";
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertInstanceOf(JsonPrimitiveData::class, $data);
@@ -314,7 +313,7 @@ class BuilderTest extends TestCase {
 	public function testFromJsonObjectInt() {
 		$jsonString = "123";
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertInstanceOf(JsonPrimitiveData::class, $data);
@@ -325,7 +324,7 @@ class BuilderTest extends TestCase {
 	public function testFromJsonObjectFloat() {
 		$jsonString = "123.456";
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertInstanceOf(JsonPrimitiveData::class, $data);
@@ -338,7 +337,7 @@ class BuilderTest extends TestCase {
 		"Example!"
 		JSON;
 		$json = json_decode($jsonString);
-		$sut = new Builder();
+		$sut = new DataObjectBuilder();
 		$data = $sut->fromJsonObject($json);
 
 		self::assertInstanceOf(JsonPrimitiveData::class, $data);

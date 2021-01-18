@@ -2,11 +2,10 @@
 namespace Gt\DataObject;
 
 use Gt\DataObject\Json\JsonArrayData;
-use Gt\DataObject\Json\JsonData;
 use Gt\DataObject\Json\JsonKvpData;
 use Gt\DataObject\Json\JsonPrimitiveData;
 
-class Builder {
+class DataObjectBuilder {
 	public function fromObject(
 		object $input,
 		string $dataObjectClass = DataObject::class
