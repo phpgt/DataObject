@@ -1,7 +1,9 @@
 <?php
 namespace Gt\DataObject\Test;
 
+use Gt\DataObject\AssociativeArrayWithinObjectException;
 use Gt\DataObject\Builder;
+use Gt\DataObject\ObjectWithinAssociativeArrayException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -130,5 +132,32 @@ class BuilderTest extends TestCase {
 		self::assertIsArray($nestedArray);
 		self::assertEquals("value5", $nestedArray[0]->getString("key5"));
 		self::assertEquals("value6", $nestedArray[1]->getString("key6"));
+	}
+
+	public function testMixingAssociativeArrayInObjectThrowsError() {
+		$object = new StdClass();
+		$object->key1 = "value1";
+		$object->assoc = [
+			"key2" => "value2",
+			"key3" => "value3",
+		];
+
+		$sut = new Builder();
+		self::expectException(AssociativeArrayWithinObjectException::class);
+		$sut->fromObject($object);
+	}
+
+	public function testMixingObjectInAssociativeArrayThrowsError() {
+		$object = new StdClass();
+		$object->key2 = "value2";
+		$object->key3 = "value3";
+
+		$array = array(
+			"key1" => "value1",
+			"obj" => $object,
+		);
+		$sut = new Builder();
+		self::expectException(ObjectWithinAssociativeArrayException::class);
+		$sut->fromArray($array);
 	}
 }

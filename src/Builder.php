@@ -10,9 +10,14 @@ class Builder {
 				$value = $this->fromObject($value);
 			}
 			elseif(is_array($value)) {
-				array_walk($value, function(&$element) {
-					$element = $this->fromObject($element);
-				});
+				if(is_int(key($value))) {
+					array_walk($value, function(&$element) {
+						$element = $this->fromObject($element);
+					});
+				}
+				else {
+					throw new AssociativeArrayWithinObjectException();
+				}
 			}
 
 			$dataObject = $dataObject->with($key, $value);
@@ -36,6 +41,9 @@ class Builder {
 					// Associative array.
 					$value = $this->fromArray($value);
 				}
+			}
+			elseif(is_object($value)) {
+				throw new ObjectWithinAssociativeArrayException();
 			}
 
 			$dataObject = $dataObject->with($key, $value);
