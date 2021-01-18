@@ -22,6 +22,25 @@ class Builder {
 	}
 
 	public function fromArray(array $input):DataObject {
+		$dataObject = new DataObject();
 
+		foreach($input as $key => $value) {
+			if(is_array($value)) {
+				if(is_int(key($value))) {
+					// Indexed array.
+					array_walk($value, function(&$element) {
+						$element = $this->fromArray($element);
+					});
+				}
+				else {
+					// Associative array.
+					$value = $this->fromArray($value);
+				}
+			}
+
+			$dataObject = $dataObject->with($key, $value);
+		}
+
+		return $dataObject;
 	}
 }

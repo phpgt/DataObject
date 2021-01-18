@@ -68,4 +68,67 @@ class BuilderTest extends TestCase {
 		self::assertEquals("value5", $nestedArray[0]->getString("key5"));
 		self::assertEquals("value6", $nestedArray[1]->getString("key6"));
 	}
+
+	public function testFromArraySimple() {
+		$array = array(
+			"key1" => "value1",
+			"key2" => "value2",
+		);
+
+		$sut = new Builder();
+		$output = $sut->fromArray($array);
+
+		self::assertEquals("value1", $output->getString("key1"));
+		self::assertEquals("value2", $output->getString("key2"));
+	}
+
+	public function testFromArrayNested() {
+		$array = array(
+			"key1" => "value1",
+			"key2" => "value2",
+			"nested" => [
+				"key3" => "value3",
+				"key4" => "value4",
+			]
+		);
+
+		$sut = new Builder();
+		$output = $sut->fromArray($array);
+
+		self::assertEquals("value1", $output->getString("key1"));
+		self::assertEquals("value2", $output->getString("key2"));
+		$nestedOutput = $output->get("nested");
+		self::assertIsObject($nestedOutput);
+		self::assertEquals("value3", $nestedOutput->getString("key3"));
+		self::assertEquals("value4", $nestedOutput->getString("key4"));
+	}
+
+	public function testFromArrayNestedArray() {
+		$array = array(
+			"key1" => "value1",
+			"key2" => "value2",
+			"nested" => [
+				"key3" => "value3",
+				"key4" => "value4",
+				"arr" => [
+					["key5" => "value5"],
+					["key6" => "value6"],
+				]
+			]
+		);
+
+		$sut = new Builder();
+		$output = $sut->fromArray($array);
+
+		self::assertEquals("value1", $output->getString("key1"));
+		self::assertEquals("value2", $output->getString("key2"));
+		$nestedOutput = $output->get("nested");
+		self::assertIsObject($nestedOutput);
+		self::assertEquals("value3", $nestedOutput->getString("key3"));
+		self::assertEquals("value4", $nestedOutput->getString("key4"));
+		$nestedArray = $nestedOutput->get("arr");
+		self::assertIsArray($nestedArray);
+		self::assertEquals("value5", $nestedArray[0]->getString("key5"));
+		self::assertEquals("value6", $nestedArray[1]->getString("key6"));
+	}
 }
