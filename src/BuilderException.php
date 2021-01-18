@@ -1,6 +1,4 @@
 <?php
 namespace Gt\DataObject;
 
-use RuntimeException;
-
-class BuilderException extends RuntimeException {}
+class BuilderException extends DataObjectException {}

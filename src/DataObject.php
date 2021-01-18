@@ -5,10 +5,11 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Gt\TypeSafeGetter\TypeSafeGetter;
 use JsonSerializable;
+use TypeError;
 
 class DataObject implements JsonSerializable, TypeSafeGetter {
 	/** @var mixed[] */
-	private array $data;
+	protected array $data;
 
 	public function __construct() {
 		$this->data = [];
@@ -61,6 +62,24 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 
 	public function jsonSerialize():mixed {
 		return $this->asArray();
+	}
+
+	/**
+	 * Get an array by name, with optionally fixed types - specify a $type
+	 * as either an inbuilt primitive (string, int, etc.) or a class name
+	 * (DateTime::class, Example::class, etc.)
+	 * @return mixed[]
+	 */
+	public function getArray(string $name, string $type = null):array {
+		$array = $this->get($name);
+
+		if($type) {
+			foreach($array as $i => $value) {
+				$this->checkType($value, $type);
+			}
+		}
+
+		return $array;
 	}
 
 	/** @return mixed[] */
@@ -143,5 +162,35 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		}
 
 		return $dateTime;
+	}
+
+	private function checkType(mixed $value, string $type):void {
+		switch($type) {
+		case "int":
+		case "integer":
+			$typeMatches = is_int($value);
+			break;
+
+		case "bool":
+		case "boolean":
+			$typeMatches = is_bool($value);
+			break;
+
+		case "string":
+			$typeMatches = is_string($value);
+			break;
+
+		case "float":
+			$typeMatches = is_float($value);
+			break;
+
+		default:
+			$typeMatches = (get_class($value) === $type);
+			break;
+		}
+
+		if(!$typeMatches) {
+			throw new TypeError("Value $value is expected to be of type $type");
+		}
 	}
 }
