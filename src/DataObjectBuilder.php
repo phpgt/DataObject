@@ -1,10 +1,6 @@
 <?php
 namespace Gt\DataObject;
 
-use Gt\DataObject\Json\JsonArrayData;
-use Gt\DataObject\Json\JsonKvpData;
-use Gt\DataObject\Json\JsonPrimitiveData;
-
 class DataObjectBuilder {
 	public function fromObject(
 		object $input,
@@ -62,43 +58,5 @@ class DataObjectBuilder {
 		}
 
 		return $dataObject;
-	}
-
-	public function fromJsonObject(
-		object|array|string|int|float|bool|null $json
-	):JsonKvpData|JsonArrayData|JsonPrimitiveData|null {
-		$jsonData = null;
-
-		if(is_object($json)) {
-			/** @var JsonKvpData $jsonData */
-			$jsonData = $this->fromObject(
-				$json,
-				JsonKvpData::class
-			);
-		}
-		elseif(is_array($json)) {
-			$jsonData = $this->fromIndexedArray(
-				$json
-			);
-		}
-		else {
-			$jsonData = (new JsonPrimitiveData())->withValue($json);
-		}
-
-		return $jsonData;
-	}
-
-	private function fromIndexedArray(array $json):JsonArrayData {
-		$jsonData = new JsonArrayData();
-
-		foreach($json as $key => $value) {
-			if(is_object($value)) {
-				$value = $this->fromObject($value);
-			}
-
-			$jsonData = $jsonData->with($key, $value);
-		}
-
-		return $jsonData;
 	}
 }
