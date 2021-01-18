@@ -30,6 +30,15 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return $this->data[$name] ?? null;
 	}
 
+	public function getObject(string $name):?static {
+		$value = $this->data[$name] ?? null;
+		if($value instanceof static) {
+			return $value;
+		}
+
+		return null;
+	}
+
 	public function getString(string $name):?string {
 		return $this->getAsType($name, "string");
 	}

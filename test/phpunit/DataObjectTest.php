@@ -38,6 +38,31 @@ class DataObjectTest extends TestCase {
 		self::assertEquals($value, $sutWith->get($key));
 	}
 
+	public function testGetWithString() {
+		$sut = new DataObject();
+		$sut = $sut->with("example-key", "example-value");
+		self::assertEquals("example-value", $sut->get("example-key"));
+	}
+
+	public function testGetWithSelf() {
+		$inner = new DataObject();
+		$inner = $inner->with("nested-key", "nested-value");
+		$sut = new DataObject();
+		$sut = $sut->with("nested", $inner);
+		self::assertEquals("nested-value", $sut->get("nested")->get("nested-key"));
+	}
+
+	public function testGetObject() {
+		$inner = new DataObject();
+		$inner = $inner->with("nested-key", "nested-value");
+		$sut = new DataObject();
+		$sut = $sut->with("nested", $inner);
+		self::assertEquals(
+			"nested-value",
+			$sut->getObject("nested")->getString("nested-key")
+		);
+	}
+
 	public function testGetStringFromInt() {
 		$value = rand(1_000, 9_999);
 		$stringValue = (string)$value;
