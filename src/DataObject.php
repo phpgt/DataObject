@@ -210,7 +210,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 			break;
 
 		default:
-			$typeMatches = (get_class($value) === $type);
+			$typeMatches = ($value instanceof $type);
 			break;
 		}
 

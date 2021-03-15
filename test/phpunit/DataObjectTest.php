@@ -2,6 +2,7 @@
 namespace Gt\DataObject\Test;
 
 use DateTime;
+use DateTimeInterface;
 use Gt\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -349,7 +350,7 @@ class DataObjectTest extends TestCase {
 		);
 	}
 
-	public function testGetArrayFixedTypes() {
+	public function testGetArrayFixedTypeInt() {
 		$timestampArray = [
 			49997,
 			50000,
@@ -365,6 +366,67 @@ class DataObjectTest extends TestCase {
 		}
 
 		self::assertEquals(count($timestampArray), $i + 1);
+	}
+
+	public function testGetArrayFixedTypeFloat() {
+		$timestampArray = [
+			49997.24567,
+			50000.28356,
+			49999.92846,
+			50004.89137,
+			50001.10239,
+		];
+		$sut = (new DataObject())
+			->with("timestamps", $timestampArray);
+		$array = $sut->getArray("timestamps", "float");
+		foreach($array as $i => $value) {
+			self::assertIsFloat($value);
+		}
+	}
+
+	public function testGetArrayFixedTypeBool() {
+		$timestampArray = [
+			true,
+			false,
+			true,
+			false,
+			false,
+		];
+		$sut = (new DataObject())
+			->with("timestamps", $timestampArray);
+		$array = $sut->getArray("timestamps", "bool");
+		foreach($array as $i => $value) {
+			self::assertIsBool($value);
+		}
+	}
+
+	public function testGetArrayFixedTypeString() {
+		$wordsArray = [
+			"one",
+			"two",
+			"three",
+			"four",
+			"five",
+		];
+		$sut = (new DataObject())
+			->with("words", $wordsArray);
+		$array = $sut->getArray("words", "string");
+		foreach($array as $i => $value) {
+			self::assertIsString($value);
+		}
+	}
+
+	public function testGetArrayFixedTypeDateTime() {
+		$dateArray = [
+			new DateTime("1st Jan 1970 00:00:00"),
+			new DateTime("5th Apr 1988 17:21:05"),
+		];
+		$sut = (new DataObject())
+			->with("dates", $dateArray);
+		$array = $sut->getArray("dates", DateTimeInterface::class);
+		foreach($array as $i => $value) {
+			self::assertInstanceOf(DateTimeInterface::class, $value);
+		}
 	}
 
 	public function testGetArrayFixedTypesMismatch() {
