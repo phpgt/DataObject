@@ -31,16 +31,27 @@ A `DataObject` has the following features:
 Usage example
 -------------
 
-Load a JSON object into a `DataObject`, then pass to a third party library for processing.
+Load an object into a `DataObject`, then pass to a third party library for processing.
 
 Due to the immutability of the `DataObject` class, there is no risk of the third party library making changes to the contents of the data.
 
 ```php
-// Create a new Builder and build the DataObject from the remote JSON response.
-$builder = new Builder();
-$data = $builder->fromObject(
-	json_decode(file_get_contents("http://example.com/endpoint.json"))
-);
+use Gt\DataObject\DataObjectBuilder;
+
+// Create a new Builder and build the DataObject from an associative array.
+// For example, data loaded from another remote data source.
+$sourceData = [
+	"id" => 105,
+	"name" => "Edgar Scolmore",
+	"address" => [
+		"street" => "32 Trestles Lane",
+		"town" => "Lensworth",
+		"county" => "Scamperingshire",
+		"postcode" => "SC41 8PN"
+	],
+];
+$builder = new DataObjectBuilder();
+$data = $builder->fromAssociativeArray($sourceData);
 
 // Pass the data to a third party to process it.
 ThirdParty::processData($data);
