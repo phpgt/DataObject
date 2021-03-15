@@ -5,6 +5,7 @@ use DateTime;
 use Gt\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use TypeError;
 
 class DataObjectTest extends TestCase {
 	public function testGetEmpty() {
@@ -339,5 +340,38 @@ class DataObjectTest extends TestCase {
 			$dateTime->format("Y-m-d H:i:s.u"),
 			$obj->dispatchDate->date
 		);
+	}
+
+	public function testGetArrayFixedTypes() {
+		$timestampArray = [
+			49997,
+			50000,
+			49999,
+			50004,
+			50001,
+		];
+		$sut = (new DataObject())
+			->with("timestamps", $timestampArray);
+		$array = $sut->getArray("timestamps", "int");
+		foreach($array as $i => $value) {
+			self::assertIsInt($value);
+		}
+
+		self::assertEquals(count($timestampArray), $i + 1);
+	}
+
+	public function testGetArrayFixedTypesMismatch() {
+		$timestampArray = [
+			49997,
+			50000,
+			49999.0000000000000000000000001, // How did this get here?
+			50004,
+			50001,
+		];
+		$sut = (new DataObject())
+			->with("timestamps", $timestampArray);
+		self::expectException(TypeError::class);
+		self::expectExceptionMessage("Value 49999 is expected to be of type int");
+		$sut->getArray("timestamps", "int");
 	}
 }
