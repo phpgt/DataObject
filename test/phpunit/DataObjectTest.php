@@ -207,9 +207,9 @@ class DataObjectTest extends TestCase {
 		self::assertEquals(105, $dateTime->format("u"));
 	}
 
-	public function getDateTimeFromString() {
-		$epochDateString = "1st January 1970 00:00:00";
-		$birthdayDateString = "5th April 1988 17:21:05";
+	public function testGetDateTimeFromString() {
+		$epochDateString = "1st Jan 1970 00:00:00";
+		$birthdayDateString = "5th Apr 1988 17:21:05";
 
 		$sut = (new DataObject())
 			->with("epoch", $epochDateString)
@@ -223,6 +223,13 @@ class DataObjectTest extends TestCase {
 			$birthdayDateString,
 			$sut->getDateTime("birthday")->format("jS M Y H:i:s")
 		);
+	}
+
+	public function testGetDateTime() {
+		$dob = new DateTime("5th April 1988 17:21:05");
+		$sut = (new DataObject())
+			->with("dob", $dob);
+		self::assertSame($dob, $sut->getDateTime("dob"));
 	}
 
 	public function testAsArray() {
