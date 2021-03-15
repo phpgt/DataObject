@@ -60,6 +60,10 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return $this->getAsType($name, DateTimeInterface::class);
 	}
 
+	public function contains(string $name):bool {
+		return isset($this->data[$name]);
+	}
+
 	public function jsonSerialize():mixed {
 		return $this->asArray();
 	}
