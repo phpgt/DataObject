@@ -64,6 +64,10 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return isset($this->data[$name]);
 	}
 
+	public function typeof(string $name):string {
+
+	}
+
 	public function jsonSerialize():mixed {
 		return $this->asArray();
 	}

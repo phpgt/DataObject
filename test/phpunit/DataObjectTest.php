@@ -4,6 +4,7 @@ namespace Gt\DataObject\Test;
 use DateTime;
 use Gt\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class DataObjectTest extends TestCase {
 	public function testGetEmpty() {
@@ -284,12 +285,23 @@ class DataObjectTest extends TestCase {
 	}
 
 	public function testTypeof() {
+		$obj = new StdClass();
+		$dateTime = new DateTime();
+
 		$sut = (new DataObject())
 			->with("name", "example")
-			->with("id", 123);
+			->with("id", 123)
+			->with("size", 2_347.467)
+			->with("isSecure", true)
+			->with("container", $obj)
+			->with("dispatchDate", $dateTime);
 
 		self::assertEquals("string", $sut->typeof("name"));
-		self::assertEquals("id", $sut->typeof("name"));
+		self::assertEquals("int", $sut->typeof("id"));
+		self::assertEquals("float", $sut->typeof("size"));
+		self::assertEquals("bool", $sut->typeof("isSecure"));
+		self::assertEquals("stdClass", $sut->typeof("container"));
+		self::assertEquals("DateTime", $sut->typeof("dispatchDate"));
 		self::assertNull($sut->typeof("address"));
 	}
 }
