@@ -282,4 +282,14 @@ class DataObjectTest extends TestCase {
 		self::assertTrue($sut->contains("id"));
 		self::assertFalse($sut->contains("address"));
 	}
+
+	public function testTypeof() {
+		$sut = (new DataObject())
+			->with("name", "example")
+			->with("id", 123);
+
+		self::assertEquals("string", $sut->typeof("name"));
+		self::assertEquals("id", $sut->typeof("name"));
+		self::assertNull($sut->typeof("address"));
+	}
 }
