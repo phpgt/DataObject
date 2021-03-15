@@ -143,25 +143,23 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 			return null;
 		}
 
-		switch($type) {
-		case "int":
-			return (int)$value;
-		case "float":
-			return (float)$value;
-		case "string":
-			return (string)$value;
-		case "bool":
-			return (bool)$value;
-		}
+		$typedValue = match($type) {
+			"int" => (int)$value,
+			"float" => (float)$value,
+			"string" => (string)$value,
+			"bool" => (bool)$value,
+			default => null,
+		};
 
-		if(method_exists($this, "getAs$type")) {
-			return call_user_func(
+		if(is_null($typedValue)
+		&& method_exists($this, "getAs$type")) {
+			$typedValue = call_user_func(
 				[$this, "getAs$type"],
 				$value
 			);
 		}
 
-		return null;
+		return $typedValue;
 	}
 
 	private function getAsDateTimeInterface(mixed $value):DateTimeInterface {
