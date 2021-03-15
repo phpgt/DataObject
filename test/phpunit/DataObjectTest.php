@@ -64,6 +64,11 @@ class DataObjectTest extends TestCase {
 		);
 	}
 
+	public function testGetObjectNoMatch() {
+		$sut = new DataObject();
+		self::assertNull($sut->getObject("nothing"));
+	}
+
 	public function testGetStringFromInt() {
 		$value = rand(1_000, 9_999);
 		$stringValue = (string)$value;
