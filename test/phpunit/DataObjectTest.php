@@ -272,4 +272,14 @@ class DataObjectTest extends TestCase {
 		self::assertEquals("leaf-value-1", $object->data->nestedData->leafKey1);
 		self::assertEquals("leaf-value-2", $object->data->nestedData->leafKey2);
 	}
+
+	public function testContains() {
+		$sut = (new DataObject())
+			->with("name", "example")
+			->with("id", 123);
+
+		self::assertTrue($sut->contains("name"));
+		self::assertTrue($sut->contains("id"));
+		self::assertFalse($sut->contains("address"));
+	}
 }
