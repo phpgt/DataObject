@@ -294,7 +294,8 @@ class DataObjectTest extends TestCase {
 			->with("size", 2_347.467)
 			->with("isSecure", true)
 			->with("container", $obj)
-			->with("dispatchDate", $dateTime);
+			->with("dispatchDate", $dateTime)
+			->with("nothing", null);
 
 		self::assertEquals("string", $sut->typeof("name"));
 		self::assertEquals("int", $sut->typeof("id"));
@@ -302,6 +303,7 @@ class DataObjectTest extends TestCase {
 		self::assertEquals("bool", $sut->typeof("isSecure"));
 		self::assertEquals("stdClass", $sut->typeof("container"));
 		self::assertEquals("DateTime", $sut->typeof("dispatchDate"));
+		self::assertEquals("null", $sut->typeof("nothing"));
 		self::assertNull($sut->typeof("address"));
 	}
 }
