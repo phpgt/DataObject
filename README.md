@@ -62,3 +62,10 @@ Database::store(
 	refname: $data->getString("name"),
 );
 ```
+
+Working with JSON data
+----------------------
+
+A JSON data structure is almost identical in scope to the DataObject introduced in this repository, with one key difference: JSON data can represent a primitive data type, not always key-value-pairs. Because of this, [PHP.Gt/Json is maintained separately to provide structured, type-safe, immutable JSON objects][json] as an extension to this DataObject repository.
+
+[json]: https://php.gt/json
