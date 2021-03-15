@@ -86,6 +86,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		}
 	}
 
+	/** @noinspection PhpMixedReturnTypeCanBeReducedInspection - This allows php.gt/json to extend and return primitives */
 	public function jsonSerialize():mixed {
 		return $this->asArray();
 	}

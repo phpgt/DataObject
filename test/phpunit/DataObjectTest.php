@@ -311,4 +311,33 @@ class DataObjectTest extends TestCase {
 		self::assertEquals("null", $sut->typeof("nothing"));
 		self::assertNull($sut->typeof("address"));
 	}
+
+	public function testJsonSerialize() {
+		$obj = new StdClass();
+		$obj->nestedKey = "nestedValue";
+		$dateTime = new DateTime();
+
+		$sut = (new DataObject())
+			->with("name", "example")
+			->with("id", 123)
+			->with("size", 2_347.467)
+			->with("isSecure", true)
+			->with("container", $obj)
+			->with("dispatchDate", $dateTime)
+			->with("nothing", null);
+		$json = json_encode($sut);
+
+		self::assertStringContainsString('"name":"example"', $json);
+		self::assertStringContainsString('"id":123', $json);
+		self::assertStringContainsString('"size":2347.467', $json);
+		self::assertStringContainsString('"isSecure":true', $json);
+		self::assertStringContainsString('"container":{"nestedKey":"nestedValue"}', $json);
+		self::assertStringContainsString('"nothing":null', $json);
+
+		$obj = json_decode($json);
+		self::assertStringContainsString(
+			$dateTime->format("Y-m-d H:i:s.u"),
+			$obj->dispatchDate->date
+		);
+	}
 }
