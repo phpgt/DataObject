@@ -3,9 +3,6 @@ namespace Gt\DataObject\Test;
 
 use Gt\DataObject\AssociativeArrayWithinObjectException;
 use Gt\DataObject\DataObjectBuilder;
-use Gt\DataObject\DataObject;
-use Gt\DataObject\Json\JsonArrayData;
-use Gt\DataObject\Json\JsonPrimitiveData;
 use Gt\DataObject\ObjectWithinAssociativeArrayException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -40,6 +37,28 @@ class DataObjectBuilderTest extends TestCase {
 		self::assertIsObject($nestedOutput);
 		self::assertEquals("value3", $nestedOutput->getString("key3"));
 		self::assertEquals("value4", $nestedOutput->getString("key4"));
+	}
+
+	public function fromObjectNestedWithCustomClass() {
+		$obj = new StdClass();
+		$obj->key1 = "value1";
+		$obj->key2 = "value2";
+		$obj->nested = new StdClass();
+		$obj->nested->deepNested = new StdClass();
+		$obj->nested->key3 = "value3";
+		$obj->nested->key4 = "value4";
+
+		$myClass = new class extends StdClass {
+		};
+
+		$sut = new DataObjectBuilder();
+		$output = $sut->fromObject($obj, $myClass);
+
+		$nestedOutput = $output->get("nested");
+		$deepNestedOutput = $nestedOutput->getObject("deepNested");
+		self::assertIsObject($nestedOutput);
+		self::assertInstanceOf($myClass, $nestedOutput);
+		self::assertInstanceOf($myClass, $deepNestedOutput);
 	}
 
 	public function testFromObjectNestedArray() {
