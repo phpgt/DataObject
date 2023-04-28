@@ -202,10 +202,10 @@ class DataObjectTest extends TestCase {
 
 	public function testGetDateTimeFromFloat() {
 		$sut = (new DataObject())
-			->with("precise-time", 576264065.000105);
+			->with("precise-time", 576264065.105);
 
 		$dateTime = $sut->getDateTime("precise-time");
-		self::assertEquals(105, $dateTime->format("u"));
+		self::assertEquals(105, $dateTime->format("v"));
 	}
 
 	public function testGetDateTimeFromString() {
@@ -361,11 +361,28 @@ class DataObjectTest extends TestCase {
 		$sut = (new DataObject())
 			->with("timestamps", $timestampArray);
 		$array = $sut->getArray("timestamps", "int");
+
 		foreach($array as $i => $value) {
 			self::assertIsInt($value);
 		}
 
 		self::assertEquals(count($timestampArray), $i + 1);
+	}
+
+	public function testGetArrayFixedTypeInt_typeError() {
+		$timestampArray = [
+			49997,
+			50000,
+			49999,
+			"PLOP!",
+			50001,
+		];
+		$sut = (new DataObject())
+			->with("timestamps", $timestampArray);
+
+		self::expectException(TypeError::class);
+		self::expectExceptionMessage("Array index 3 must be of type int, string given");
+		$sut->getArray("timestamps", "int");
 	}
 
 	public function testGetArrayFixedTypeFloat() {
@@ -416,6 +433,20 @@ class DataObjectTest extends TestCase {
 		}
 	}
 
+	public function testGetArrayFixedTypeString_typeErrorWithObject() {
+		$wordsArray = [
+			"one",
+			"two",
+			"three",
+			new DateTime("2222-02-22"),
+			"five",
+		];
+		$sut = (new DataObject())
+			->with("words", $wordsArray);
+		self::expectExceptionMessage("Array index 3 must be of type string, DateTime given");
+		$sut->getArray("words", "string");
+	}
+
 	public function testGetArrayFixedTypeDateTime() {
 		$dateArray = [
 			new DateTime("1st Jan 1970 00:00:00"),
@@ -440,7 +471,7 @@ class DataObjectTest extends TestCase {
 		$sut = (new DataObject())
 			->with("timestamps", $timestampArray);
 		self::expectException(TypeError::class);
-		self::expectExceptionMessage("Value 49999 is expected to be of type int");
+		self::expectExceptionMessage("Array index 2 must be of type int, double given");
 		$sut->getArray("timestamps", "int");
 	}
 }

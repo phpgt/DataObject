@@ -3,12 +3,15 @@ namespace Gt\DataObject;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Gt\TypeSafeGetter\NullableTypeSafeGetter;
 use Gt\TypeSafeGetter\TypeSafeGetter;
 use JsonSerializable;
 use TypeError;
 
 class DataObject implements JsonSerializable, TypeSafeGetter {
-	/** @var mixed[] */
+	use NullableTypeSafeGetter;
+
+	/** @var array<string, mixed> */
 	protected array $data;
 
 	public function __construct() {
@@ -32,32 +35,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	public function getObject(string $name):?static {
-		$value = $this->data[$name] ?? null;
-		if($value instanceof static) {
-			return $value;
-		}
-
-		return null;
-	}
-
-	public function getString(string $name):?string {
-		return $this->getAsType($name, "string");
-	}
-
-	public function getInt(string $name):?int {
-		return $this->getAsType($name, "int");
-	}
-
-	public function getFloat(string $name):?float {
-		return $this->getAsType($name, "float");
-	}
-
-	public function getBool(string $name):?bool {
-		return $this->getAsType($name, "bool");
-	}
-
-	public function getDateTime(string $name):DateTimeInterface {
-		return $this->getAsType($name, DateTimeInterface::class);
+		return $this->getInstance($name, static::class);
 	}
 
 	public function contains(string $name):bool {
@@ -101,15 +79,13 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		$array = $this->get($name);
 
 		if($type) {
-			foreach($array as $i => $value) {
-				$this->checkType($value, $type);
-			}
+			$this->checkArrayType($array, $type);
 		}
 
 		return $array;
 	}
 
-	/** @return mixed[] */
+	/** @return array<string, mixed> */
 	public function asArray():array {
 		$array = $this->data;
 
@@ -134,88 +110,28 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return (object)$array;
 	}
 
-	private function getAsType(
-		string $name,
-		string $type
-	):mixed {
-		$value = $this->get($name);
-		if(is_null($value)) {
-			return null;
+	/** @param array $array */
+	private function checkArrayType(array $array, string $type):void {
+		$errorMessage = "";
+
+		foreach($array as $i => $value) {
+			$actualType = is_scalar($value) ? gettype($value) : get_class($value);
+
+			if(class_exists($type) || interface_exists($type)) {
+				if(!is_a($value, $type)) {
+					$errorMessage = "Array index $i must be of type $type, $actualType given";
+				}
+			}
+			else {
+				$checkFunction = "is_$type";
+				if(!call_user_func($checkFunction, $value)) {
+					$errorMessage = "Array index $i must be of type $type, $actualType given";
+				}
+			}
 		}
 
-		$typedValue = match($type) {
-			"int" => (int)$value,
-			"float" => (float)$value,
-			"string" => (string)$value,
-			"bool" => (bool)$value,
-			default => null,
-		};
-
-		if(is_null($typedValue)
-		&& method_exists($this, "getAs$type")) {
-			$typedValue = call_user_func(
-				[$this, "getAs$type"],
-				$value
-			);
-		}
-
-		return $typedValue;
-	}
-
-	private function getAsDateTimeInterface(mixed $value):DateTimeInterface {
-		$dateTime = new DateTimeImmutable();
-
-		if($value instanceof DateTimeInterface) {
-			return $value;
-		}
-		elseif(is_int($value)) {
-			$dateTime = $dateTime->setTimestamp($value);
-		}
-		elseif(is_float($value)) {
-			$timestamp = (int)floor($value);
-			$microsecond = ($value - $timestamp) * 1_000_000;
-			$dateTime = $dateTime->setTimestamp($timestamp);
-			$dateTime = $dateTime->setTime(
-				(int)$dateTime->format("H"),
-				(int)$dateTime->format("i"),
-				(int)$dateTime->format("s"),
-				(int)round($microsecond)
-			);
-		}
-		else {
-			$dateTime = new DateTimeImmutable($value);
-		}
-
-		return $dateTime;
-	}
-
-	private function checkType(mixed $value, string $type):void {
-		switch($type) {
-		case "int":
-		case "integer":
-			$typeMatches = is_int($value);
-			break;
-
-		case "bool":
-		case "boolean":
-			$typeMatches = is_bool($value);
-			break;
-
-		case "string":
-			$typeMatches = is_string($value);
-			break;
-
-		case "float":
-			$typeMatches = is_float($value);
-			break;
-
-		default:
-			$typeMatches = ($value instanceof $type);
-			break;
-		}
-
-		if(!$typeMatches) {
-			throw new TypeError("Value $value is expected to be of type $type");
+		if($errorMessage) {
+			throw new TypeError($errorMessage);
 		}
 	}
 }
