@@ -1,7 +1,7 @@
 Structured, type-safe, immutable data transfer.
 ===============================================
 
-Data Transfer Objects are a mechanism to facilitate transfer of data between different layers of an application. This library introduces the `DataObject` class which can be built from an existing associative array or standard object, using the `DataObjectBuilder` class.
+A Data Transfer Objects (DTO) in a programming language is a design pattern that facilitates transfer of data between different layers of an application. This library introduces the `DataObject` class which can be built from an existing associative array or standard object, using the `DataObjectBuilder` class.
 
 ***
 
