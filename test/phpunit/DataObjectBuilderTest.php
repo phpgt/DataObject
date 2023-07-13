@@ -180,4 +180,17 @@ class DataObjectBuilderTest extends TestCase {
 		self::expectException(ObjectWithinAssociativeArrayException::class);
 		$sut->fromAssociativeArray($array);
 	}
+
+	public function testEmptyNestedArray():void {
+		$array = array (
+			"key1" => "value1",
+			"key2" => "value2",
+			"nested" => [],
+		);
+		$sut = new DataObjectBuilder();
+		$output = $sut->fromAssociativeArray($array);
+
+		self::assertSame("value2", $output->getString("key2"));
+		self::assertSame([], $output->getArray("nested"));
+	}
 }
