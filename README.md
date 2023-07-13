@@ -8,10 +8,10 @@ A Data Transfer Objects (DTO) in a programming language is a design pattern that
 <a href="https://giub.com/PhpGt/DataObject/actions" target="_blank">
 	<img src="https://badge.status.php.gt/dataobject-build.svg" alt="Build status" />
 </a>
-<a href="https://scrutinizer-ci.com/g/PhpGt/DataObject" target="_blank">
+<a href="https://app.codacy.com/gh/PhpGt/DataObject" target="_blank">
 	<img src="https://badge.status.php.gt/dataobject-quality.svg" alt="Code quality" />
 </a>
-<a href="https://scrutinizer-ci.com/g/PhpGt/DataObject" target="_blank">
+<a href="https://app.codecov.io/gh/PhpGt/DataObject" target="_blank">
 	<img src="https://badge.status.php.gt/dataobject-coverage.svg" alt="Code coverage" />
 </a>
 <a href="https://packagist.org/packages/PhpGt/DataObject" target="_blank">
