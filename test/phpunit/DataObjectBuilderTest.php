@@ -193,4 +193,17 @@ class DataObjectBuilderTest extends TestCase {
 		self::assertSame("value2", $output->getString("key2"));
 		self::assertSame([], $output->getArray("nested"));
 	}
+
+	public function testEmptyNestedArrayInObject():void {
+		$object = (object)[
+			"key1" => "value1",
+			"key2" => "value2",
+			"nested" => [],
+		];
+		$sut = new DataObjectBuilder();
+		$output = $sut->fromObject($object);
+
+		self::assertSame("value2", $output->getString("key2"));
+		self::assertSame([], $output->getArray("nested"));
+	}
 }

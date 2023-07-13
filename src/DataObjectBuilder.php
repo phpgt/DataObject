@@ -14,7 +14,10 @@ class DataObjectBuilder {
 				$value = $this->fromObject($value, $dataObjectClass);
 			}
 			elseif(is_array($value)) {
-				if(is_int(key($value))) {
+				if(empty($value)) {
+					$value = [];
+				}
+				elseif(is_int(key($value))) {
 					array_walk($value, function(&$element)use($dataObjectClass) {
 						if(is_object($element)) {
 							$element = $this->fromObject($element, $dataObjectClass);
