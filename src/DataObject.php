@@ -75,10 +75,10 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	 * (DateTime::class, Example::class, etc.)
 	 * @return mixed[]
 	 */
-	public function getArray(string $name, string $type = null):array {
+	public function getArray(string $name, string $type = null):?array {
 		$array = $this->get($name);
 
-		if($type) {
+		if($array && $type) {
 			$this->checkArrayType($array, $type);
 		}
 
@@ -110,7 +110,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return (object)$array;
 	}
 
-	/** @param array $array */
+	/** @param mixed[] $array */
 	private function checkArrayType(array $array, string $type):void {
 		$errorMessage = "";
 

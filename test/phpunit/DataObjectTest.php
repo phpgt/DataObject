@@ -474,4 +474,11 @@ class DataObjectTest extends TestCase {
 		self::expectExceptionMessage("Array index 2 must be of type int, double given");
 		$sut->getArray("timestamps", "int");
 	}
+
+	public function testGetArray_nullableType():void {
+		$sut = (new DataObject())
+			->with("key1", [1, 2, 3]);
+		self::assertSame([1, 2, 3], $sut->getArray("key1", "int"));
+		self::assertNull($sut->getArray("key2", "int"));
+	}
 }

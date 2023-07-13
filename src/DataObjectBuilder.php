@@ -32,6 +32,7 @@ class DataObjectBuilder {
 		return $dataObject;
 	}
 
+	/** @param mixed[] $input */
 	public function fromAssociativeArray(array $input):DataObject {
 		$dataObject = new DataObject();
 
