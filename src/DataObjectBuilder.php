@@ -32,12 +32,16 @@ class DataObjectBuilder {
 		return $dataObject;
 	}
 
+	/** @param mixed[] $input */
 	public function fromAssociativeArray(array $input):DataObject {
 		$dataObject = new DataObject();
 
 		foreach($input as $key => $value) {
 			if(is_array($value)) {
-				if(is_int(key($value))) {
+				if(empty($value)) {
+					$value = [];
+				}
+				elseif(is_int(key($value))) {
 					// Indexed array.
 					array_walk($value, function(&$element) {
 						if(is_array($element)) {
