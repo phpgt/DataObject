@@ -37,7 +37,10 @@ class DataObjectBuilder {
 
 		foreach($input as $key => $value) {
 			if(is_array($value)) {
-				if(is_int(key($value))) {
+				if(empty($value)) {
+					$value = [];
+				}
+				elseif(is_int(key($value))) {
 					// Indexed array.
 					array_walk($value, function(&$element) {
 						if(is_array($element)) {
