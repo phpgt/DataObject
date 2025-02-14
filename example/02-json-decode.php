@@ -3,7 +3,17 @@ use Gt\DataObject\DataObjectBuilder;
 
 require __DIR__ . "/../vendor/autoload.php";
 
-$jsonString = '{"name":"Cody","colour":"orange","food":["biscuits","mushrooms","corn on the cob"]}';
+$jsonString = <<<JSON
+{
+	"name": "Cody",
+	"colour": "orange",
+	"food": [
+		"biscuits",
+		"mushrooms",
+		"corn on the cob"
+	]
+}
+JSON;
 
 $builder = new DataObjectBuilder();
 $obj = $builder->fromObject(json_decode($jsonString));
