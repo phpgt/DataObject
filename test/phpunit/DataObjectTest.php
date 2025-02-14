@@ -3,9 +3,11 @@ namespace Gt\DataObject\Test;
 
 use DateTime;
 use DateTimeInterface;
+use Error;
 use Gt\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Throwable;
 use TypeError;
 
 class DataObjectTest extends TestCase {
@@ -103,6 +105,21 @@ class DataObjectTest extends TestCase {
 	public function testGetStringNull() {
 		$sut = new DataObject();
 		self::assertNull($sut->getString("nothing"));
+	}
+
+	public function testGetStringFromDateTime() {
+		$sut = (new DataObject())
+			->with("dt", new DateTime());
+
+		$exception = null;
+
+		try {
+			$data = $sut->getString("dt");
+		}
+		catch(Throwable $exception) {}
+
+		self::assertInstanceOf(Error::class, $exception);
+		self::assertSame("Object of class DateTime could not be converted to string", $exception->getMessage());
 	}
 
 	public function testGetIntFromString() {
@@ -374,15 +391,20 @@ class DataObjectTest extends TestCase {
 			49997,
 			50000,
 			49999,
-			"PLOP!",
+			"50003",
 			50001,
 		];
 		$sut = (new DataObject())
 			->with("timestamps", $timestampArray);
 
-		self::expectException(TypeError::class);
-		self::expectExceptionMessage("Array index 3 must be of type int, string given");
-		$sut->getArray("timestamps", "int");
+		$array = $sut->getArray("timestamps", "int");
+		foreach($array as $i => $value) {
+			if($i === 3) {
+				self::assertSame(50003, $value);
+			}
+
+			self::assertIsInt($value);
+		}
 	}
 
 	public function testGetArrayFixedTypeFloat() {

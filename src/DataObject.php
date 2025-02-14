@@ -79,7 +79,7 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		$array = $this->get($name);
 
 		if($array && $type) {
-			$this->checkArrayType($array, $type);
+			$array = $this->checkArrayType($array, $type);
 		}
 
 		return $array;
@@ -110,8 +110,11 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return (object)$array;
 	}
 
-	/** @param mixed[] $array */
-	private function checkArrayType(array $array, string $type):void {
+	/**
+	 * @param array $array
+	 * @return array
+	 */
+	private function checkArrayType(array $array, string $type):array {
 		$errorMessage = "";
 
 		foreach($array as $i => $value) {
@@ -122,16 +125,23 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 					$errorMessage = "Array index $i must be of type $type, $actualType given";
 				}
 			}
-			else {
-				$checkFunction = "is_$type";
-				if(!call_user_func($checkFunction, $value)) {
-					$errorMessage = "Array index $i must be of type $type, $actualType given";
-				}
+			elseif(function_exists("is_$type")) {
+				$castedValue = match($type) {
+					"int" => (int)$value,
+					"bool" => (bool)$value,
+					"string" => (string)$value,
+					"float", "double" => (float)$value,
+					"array" => (array)$value,
+					default => null,
+				};
+				$array[$i] = $castedValue;
 			}
 		}
 
 		if($errorMessage) {
 			throw new TypeError($errorMessage);
 		}
+
+		return $array;
 	}
 }
