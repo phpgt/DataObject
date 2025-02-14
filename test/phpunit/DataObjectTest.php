@@ -455,7 +455,7 @@ class DataObjectTest extends TestCase {
 		}
 	}
 
-	public function testGetArrayFixedTypeString_typeErrorWithObject() {
+	public function testGetArrayFixedTypeString_typeErrorWithDateTime() {
 		$wordsArray = [
 			"one",
 			"two",
@@ -465,7 +465,7 @@ class DataObjectTest extends TestCase {
 		];
 		$sut = (new DataObject())
 			->with("words", $wordsArray);
-		self::expectExceptionMessage("Array index 3 must be of type string, DateTime given");
+		self::expectExceptionMessage("Object of class DateTime could not be converted to string");
 		$sut->getArray("words", "string");
 	}
 
@@ -478,7 +478,7 @@ class DataObjectTest extends TestCase {
 			->with("dates", $dateArray);
 		$array = $sut->getArray("dates", DateTimeInterface::class);
 		foreach($array as $i => $value) {
-			self::assertInstanceOf(DateTimeInterface::class, $value);
+			self::assertInstanceOf(DateTime::class, $value);
 		}
 	}
 
@@ -492,9 +492,8 @@ class DataObjectTest extends TestCase {
 		];
 		$sut = (new DataObject())
 			->with("timestamps", $timestampArray);
-		self::expectException(TypeError::class);
-		self::expectExceptionMessage("Array index 2 must be of type int, double given");
-		$sut->getArray("timestamps", "int");
+		$array = $sut->getArray("timestamps", "int");
+		self::assertSame(49999, $array[2]);
 	}
 
 	public function testGetArray_nullableType():void {

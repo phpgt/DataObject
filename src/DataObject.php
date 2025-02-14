@@ -114,8 +114,8 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	}
 
 	/**
-	 * @param array $array
-	 * @return array
+	 * @param array<mixed> $array
+	 * @return array<mixed>
 	 */
 	private function checkArrayType(array $array, string $type):array {
 		$errorMessage = "";
