@@ -75,8 +75,11 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	 * (DateTime::class, Example::class, etc.)
 	 * @return mixed[]
 	 */
-	public function getArray(string $name, string $type = null):?array {
+	public function getArray(string $name, ?string $type = null):?array {
 		$array = $this->get($name);
+		if(is_object($array) && method_exists($array, "asArray")) {
+			$array = $array->asArray();
+		}
 
 		if($array && $type) {
 			$array = $this->checkArrayType($array, $type);
