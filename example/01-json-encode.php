@@ -1,5 +1,4 @@
 <?php
-
 use Gt\DataObject\DataObject;
 
 require __DIR__ . "/../vendor/autoload.php";
@@ -13,4 +12,4 @@ $obj = (new DataObject())
 		"corn on the cob",
 	]);
 
-echo json_encode($obj);
+echo json_encode($obj), PHP_EOL;

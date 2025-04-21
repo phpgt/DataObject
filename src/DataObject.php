@@ -75,11 +75,14 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 	 * (DateTime::class, Example::class, etc.)
 	 * @return mixed[]
 	 */
-	public function getArray(string $name, string $type = null):?array {
+	public function getArray(string $name, ?string $type = null):?array {
 		$array = $this->get($name);
+		if(is_object($array) && method_exists($array, "asArray")) {
+			$array = $array->asArray();
+		}
 
 		if($array && $type) {
-			$this->checkArrayType($array, $type);
+			$array = $this->checkArrayType($array, $type);
 		}
 
 		return $array;
@@ -110,28 +113,64 @@ class DataObject implements JsonSerializable, TypeSafeGetter {
 		return (object)$array;
 	}
 
-	/** @param mixed[] $array */
-	private function checkArrayType(array $array, string $type):void {
-		$errorMessage = "";
+	/**
+	 * @param array<mixed> $array
+	 * @return array<mixed>
+	 */
+	private function checkArrayType(array $array, string $type): array {
+		$this->validateTypeExists($type);
 
-		foreach($array as $i => $value) {
-			$actualType = is_scalar($value) ? gettype($value) : get_class($value);
-
-			if(class_exists($type) || interface_exists($type)) {
-				if(!is_a($value, $type)) {
-					$errorMessage = "Array index $i must be of type $type, $actualType given";
-				}
-			}
-			else {
-				$checkFunction = "is_$type";
-				if(!call_user_func($checkFunction, $value)) {
-					$errorMessage = "Array index $i must be of type $type, $actualType given";
-				}
-			}
+		foreach ($array as $i => $value) {
+			$array[$i] = $this->processValue($value, $type, $i);
 		}
 
-		if($errorMessage) {
-			throw new TypeError($errorMessage);
+		return $array;
+	}
+
+	private function validateTypeExists(string $type): void {
+		if(!class_exists($type)
+		&& !interface_exists($type)
+		&& !function_exists("is_$type")) {
+			throw new TypeError("Invalid type: $type does not exist.");
 		}
+	}
+
+	private function processValue(
+		mixed $value,
+		string $type,
+		int $index,
+	): mixed {
+		if (class_exists($type) || interface_exists($type)) {
+			$this->assertInstanceOfType($value, $type, $index);
+		} elseif (function_exists("is_$type")) {
+			return $this->castValue($value, $type);
+		}
+
+		return $value;
+	}
+
+	private function assertInstanceOfType(
+		mixed $value,
+		string $type,
+		int $index,
+	): void {
+		if (!is_a($value, $type)) {
+			$actualType = is_scalar($value)
+				? gettype($value)
+				: get_class($value);
+			throw new TypeError("Array index $index"
+				. " must be of type $type, $actualType given");
+		}
+	}
+
+	private function castValue(mixed $value, string $type): mixed {
+		return match ($type) {
+			"int" => (int)$value,
+			"bool" => (bool)$value,
+			"string" => (string)$value,
+			"float", "double" => (float)$value,
+			"array" => (array)$value,
+			default => null,
+		};
 	}
 }
