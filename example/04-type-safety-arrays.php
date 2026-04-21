@@ -1,5 +1,5 @@
 <?php
-use Gt\DataObject\DataObject;
+use GT\DataObject\DataObject;
 
 require __DIR__ . "/../vendor/autoload.php";
 

@@ -1,4 +1,4 @@
 <?php
-namespace Gt\DataObject;
+namespace GT\DataObject;
 
 class ObjectWithinAssociativeArrayException extends BuilderException {}

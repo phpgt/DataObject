@@ -5,7 +5,7 @@ A Data Transfer Objects (DTO) in a programming language is a design pattern that
 
 ***
 
-<a href="https://giub.com/PhpGt/DataObject/actions" target="_blank">
+<a href="https://github.com/PhpGt/DataObject/actions" target="_blank">
 	<img src="https://badge.status.php.gt/dataobject-build.svg" alt="Build status" />
 </a>
 <a href="https://app.codacy.com/gh/PhpGt/DataObject" target="_blank">
@@ -18,7 +18,7 @@ A Data Transfer Objects (DTO) in a programming language is a design pattern that
 	<img src="https://badge.status.php.gt/dataobject-version.svg" alt="Current version" />
 </a>
 <a href="http://www.php.gt/dataobject" target="_blank">
-	<img src="https://badge.status.php.gt/dataobject-docs.svg" alt="PHP.Gt/DataObject documentation" />
+	<img src="https://badge.status.php.gt/dataobject-docs.svg" alt="PHP.GT/DataObject documentation" />
 </a>
 
 A `DataObject` has the following features: 
@@ -36,7 +36,7 @@ Load an object into a `DataObject`, then pass to a third party library for proce
 Due to the immutability of the `DataObject` class, there is no risk of the third party library making changes to the contents of the data.
 
 ```php
-use Gt\DataObject\DataObjectBuilder;
+use GT\DataObject\DataObjectBuilder;
 
 // Create a new Builder and build the DataObject from an associative array.
 // For example, data loaded from another remote data source.
@@ -66,6 +66,6 @@ Database::store(
 Working with JSON data
 ----------------------
 
-A JSON data structure is almost identical in scope to the DataObject introduced in this repository, with one key difference: JSON data can represent a primitive data type, not always key-value-pairs. Because of this, [PHP.Gt/Json is maintained separately to provide structured, type-safe, immutable JSON objects][json] as an extension to this DataObject repository.
+A JSON data structure is almost identical in scope to the DataObject introduced in this repository, with one key difference: JSON data can represent a primitive data type, not always key-value-pairs. Because of this, [PHP.GT/Json is maintained separately to provide structured, type-safe, immutable JSON objects][json] as an extension to this PHP.GT/DataObject repository.
 
 [json]: https://php.gt/json

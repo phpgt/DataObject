@@ -1,5 +1,5 @@
 <?php
-namespace Gt\DataObject;
+namespace GT\DataObject;
 
 class DataObjectBuilder {
 	public function fromObject(
