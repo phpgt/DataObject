@@ -1,10 +1,10 @@
 <?php
-namespace Gt\DataObject\Test;
+namespace GT\DataObject\Test;
 
 use DateTime;
 use DateTimeInterface;
 use Error;
-use Gt\DataObject\DataObject;
+use GT\DataObject\DataObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Throwable;

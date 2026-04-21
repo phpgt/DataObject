@@ -27,12 +27,13 @@
 
 	"autoload": {
 		"psr-4": {
+			"GT\\DataObject\\": "./src",
 			"Gt\\DataObject\\": "./src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Gt\\DataObject\\Test\\": "./test/phpunit"
+			"GT\\DataObject\\Test\\": "./test/phpunit"
 		}
 	},
 

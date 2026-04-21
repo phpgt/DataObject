@@ -1,7 +1,7 @@
 <?php
-namespace Gt\DataObject\Test\Helper;
+namespace GT\DataObject\Test\Helper;
 
-use Gt\DataObject\DataObject;
+use GT\DataObject\DataObject;
 
 class CustomDataObject extends DataObject {
 }

@@ -1,10 +1,10 @@
 <?php
-namespace Gt\DataObject\Test;
+namespace GT\DataObject\Test;
 
-use Gt\DataObject\AssociativeArrayWithinObjectException;
-use Gt\DataObject\DataObjectBuilder;
-use Gt\DataObject\ObjectWithinAssociativeArrayException;
-use Gt\DataObject\Test\Helper\CustomDataObject;
+use GT\DataObject\AssociativeArrayWithinObjectException;
+use GT\DataObject\DataObjectBuilder;
+use GT\DataObject\ObjectWithinAssociativeArrayException;
+use GT\DataObject\Test\Helper\CustomDataObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
